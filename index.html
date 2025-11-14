@@ -318,12 +318,23 @@ function load(){ try{ const raw = localStorage.getItem(storeKey); if(raw) state 
 /* ---------- DEFAULTS ---------- */
 function ensureDefaults(){
   if(!Array.isArray(state.players) || state.players.length === 0){
-    state.players = DEFAULT_ORDER.map((n,i)=>({ id:uid(), name:n, pos:POS[i%3], present:true, benchCd:0 }));
+    state.players = [
+  { id: uid(), name: 'Brent', pos: 'Aanvaller', present: true, benchCd: 0 },
+  { id: uid(), name: 'Jacob', pos: 'Verdediger', present: true, benchCd: 0 },
+  { id: uid(), name: 'Julan', pos: 'Middenvelder', present: true, benchCd: 0 },
+  { id: uid(), name: 'Koen', pos: 'Verdediger', present: true, benchCd: 0 },
+  { id: uid(), name: 'Mink', pos: 'Verdediger', present: true, benchCd: 0 },
+  { id: uid(), name: 'Noud', pos: 'Keeper', present: true, benchCd: 0 },
+  { id: uid(), name: 'Thijs', pos: 'Middenvelder', present: true, benchCd: 0 },
+  { id: uid(), name: 'Todd', pos: 'Aanvaller', present: true, benchCd: 0 },
+];
+
   }
   if(!Array.isArray(state.keeperByQuarter) || state.keeperByQuarter.length !== 4){
-    const ps = state.players.map(p=>p.id);
-    state.keeperByQuarter = [ps[0]||null, ps[1]||ps[0]||null, ps[2]||ps[0]||null, ps[3]||ps[0]||null];
-  }
+  const noud = state.players.find(p => p.name === 'Noud')?.id || null;
+  state.keeperByQuarter = [noud, noud, noud, noud];
+}
+
   if(!state.q) state.q = 1;
 }
 function presentPlayers(){ return state.players.filter(p=>p.present); }
@@ -837,7 +848,25 @@ document.addEventListener('click', (e) => {
   }
   if (btn.id === 'btnReset') {
     if (!confirm('Team resetten naar vaste 8 spelers?')) return;
-    seedDefaultPlayers();
+    function seedDefaultPlayers(){
+  state.players = [
+    { id: uid(), name: 'Brent', pos: 'Aanvaller', present: true, benchCd: 0 },
+    { id: uid(), name: 'Jacob', pos: 'Verdediger', present: true, benchCd: 0 },
+    { id: uid(), name: 'Julan', pos: 'Middenvelder', present: true, benchCd: 0 },
+    { id: uid(), name: 'Koen', pos: 'Verdediger', present: true, benchCd: 0 },
+    { id: uid(), name: 'Mink', pos: 'Verdediger', present: true, benchCd: 0 },
+    { id: uid(), name: 'Noud', pos: 'Keeper', present: true, benchCd: 0 },
+    { id: uid(), name: 'Thijs', pos: 'Middenvelder', present: true, benchCd: 0 },
+    { id: uid(), name: 'Todd', pos: 'Aanvaller', present: true, benchCd: 0 },
+  ];
+
+  const noud = state.players.find(p => p.name === 'Noud')?.id || null;
+  state.keeperByQuarter = [noud, noud, noud, noud];
+
+  save();
+  renderSetup();
+}
+
     recomputeAll();
     renderLive();
     document.querySelector('.tab button[data-tab="live"]')?.click();
